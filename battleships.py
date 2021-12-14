@@ -79,8 +79,8 @@ def ship_placement(grid, ships):
     """Places the ships on the grid"""
     for ship in ships:
         while True:
-            x = random.randint(0, 9)
-            y = random.randint(0, 9)
+            x = random.randint(0, 9) # pylint: disable=unused-variable
+            y = random.randint(0, 9) # pylint: disable=unused-variable
             if grid[x][y] == "":
                 grid[x][y] = ship.name
                 break
