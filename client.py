@@ -10,44 +10,67 @@
 # 6. The player will then be asked if they would like to play again.
 # 7. The game will then repeat from step 2.
 
-import numpy as np
 import random
 import time
-
-# Ask the player to choose the size of the grid
-print("Welcome to Battleships!")
-print("Please choose the size of the grid:")
-print("1. 5x5")
-print("2. 10x10")
-print("3. 15x15")
-print("4. 20x20")
-print("5. 25x25")
-grid_size = int(input("Please enter your choice: "))
-
-# Create a grid the size that the player has selected
-if grid_size == 1:
-    grid_size = 5
-elif grid_size == 2:
-    grid_size = 10
-elif grid_size == 3:
-    grid_size = 15
-elif grid_size == 4:
-    grid_size = 20
-elif grid_size == 5:
-    grid_size = 25
-else:
-    print("Invalid input. Please try again.")
-    exit()
+import numpy as np
+# Generate a grid of 5 rows and 5 columns
+grid = np.zeros((5, 5))
 
 
-# Create a grid of the size that the player has selected
-grid = np.zeros((grid_size, grid_size))
+def generate_grid():
+    """Generate a grid of 5 rows and 5 columns"""
+    grid = np.zeros((5, 5))
+    return grid
 
-# Print the grid, but strip any items from a list
+
+def generate_ships(grid):
+    """Generate 5 random hidden ships on the grid"""
+    ships = []
+    for i in range(5):
+        ships.append(random.randint(0, 4))
+    return ships
+
+
 def print_grid(grid):
-    for row in grid:
-        print(row)
+    """Print the grid"""
+    print(grid)
 
+
+def get_guess():
+    """Get the user's guess"""
+    guess = input("Enter a guess: ")
+    return guess
+
+
+def check_guess(guess, ships):
+    """Check if the guess is a hit or a miss"""
+    if guess in ships:
+        print("Hit!")
+    else:
+        print("Miss!")
+
+
+def play_again():
+    """Ask the user if they would like to play again"""
+    play_again = input("Would you like to play again? (y/n): ")
+    return play_again
+
+
+def main():
+    """Run the game"""
+    grid = generate_grid()
+    ships = generate_ships(grid)
+    print_grid(grid)
+    guess = get_guess()
+    check_guess(guess, ships)
+    if play_again() == "y":
+        main()
+    else:
+        print("Thanks for playing!")
+
+
+if __name__ == "__main__":
+    main()
 
 # define a structure for the ships
 class Ship:
