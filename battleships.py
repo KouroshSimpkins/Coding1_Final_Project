@@ -103,3 +103,36 @@ def coordinate_prompt():
         except ValueError:
             print("Please enter a valid coordinate")
             continue
+
+
+# A function that runs the game
+def game_run(grid, ships):
+    """Runs the game"""
+    while True:
+        print_grid(grid)
+        x, y = coordinate_prompt()
+        if grid[x][y] == "":
+            grid[x][y] = "[*]"
+        else:
+            for ship in ships:
+                if grid[x][y] == ship.name:
+                    ship.hit()
+                    grid[x][y] = "[X]"
+                    if ship.sunk():
+                        print("You sunk my {}".format(ship.name))
+                    break
+                else:
+                    grid[x][y] = "[*]"
+
+
+# Run the game
+def main():
+    """Runs the game"""
+    grid = grid_generator()
+    ships = ship_generator()
+    ship_placement(grid, ships)
+    game_run(grid, ships)
+
+
+if __name__ == "__main__":
+    main()
