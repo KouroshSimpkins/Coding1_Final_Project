@@ -45,6 +45,12 @@ def print_board(s,board):
             print()
 
 
+#This is one way to create the grid and store the ship information.
+#There are more efficient ways I'm sure, but this is the way I plan to 
+#implement it at the moment.
+
+#This code is fucking atrocious. I'm sorry. I'll fix it later.
+
 def user_place_ships(board,ships):
 
     for ship in ships.keys():
