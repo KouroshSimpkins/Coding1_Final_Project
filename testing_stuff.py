@@ -19,18 +19,31 @@ def setup_board():
             board_row.append(-1)
         board.append(board_row)
 
-    player1_board = copy.deepcopy(board), "player1"
-    player2_board = copy.deepcopy(board), "player2"
+    return board
 
-    return player1_board, player2_board
-
-
-player1_board, player2_board = setup_board()
+player1_board = setup_board(), "player1"
+player2_board = setup_board(), "player2"
 
 def print_board(board):
-    for i in board[0]:
-        print(i)
-    print(board[1])
+    """Board is a 3 dimensional array"""
+
+    # print horizontal numbers
+    print("   ", end="")
+    for i in range(1, 11):
+        print(" " + str(i) + " ", end="")
+    print()
+
+    # print board
+    for i in range(10):
+
+        if i != 9:
+            print(str(i + 1) + "  ", end=" ")
+        else:
+            print(str(i + 1) + " ", end=" ")
+
+
+        for j in range(10):
+            print(board[0][i][j], end=" ")
+        print()
 
 print_board(player1_board)
-print_board(player2_board)
