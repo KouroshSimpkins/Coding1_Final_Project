@@ -35,6 +35,8 @@ def print_board(board):
     """Board is an array with 2 positions,
     the first contains the 10*10 board, the second stores the reference to the player."""
 
+    cls()
+
     targetting_board = False
     player_num = board[1]
     if "targetting" in player_num:
@@ -85,16 +87,17 @@ def place_ships(board,ships):
         print("Enter the coordinates for the " + ship)
         print("(ex: A1, B2, etc)")
         print("Enter the orientation of the ship (v or h)")
-        print()
 
         # Get ship location and orientation
         valid = True
         while valid:
+            print()
+            overlap = False
             coords = input("Enter coordinates: ")
             orientation = input("Enter orientation: ")
 
             x = ord(coords[0]) - 65
-            y = int(coords[1]) - 1
+            y = int(coords[1])
             if x < 0 or x > 9 or y < 0 or y > 9:
                 print("Invalid coordinates.")
             elif orientation not in ('v', 'h'):
@@ -108,10 +111,14 @@ def place_ships(board,ships):
                     for i in range(ship_length):
                         if temp_board[x + i][y] != -1:
                             print("Ship overlaps.")
+                            overlap = True
                 elif orientation == "h":
                     for i in range(ship_length):
                         if temp_board[x][y + i] != -1:
                             print("Ship overlaps.")
+                            overlap = True
+                if not overlap:
+                    valid = False
 
 
         # Place the ship
@@ -126,6 +133,76 @@ def place_ships(board,ships):
 
         print_board(board)
 
+
+def make_move(board):
+    """A function for making a move on the board.
+    Takes 1 argument, the board array."""
+
+    temp_board = board[0]
+
+    valid = False
+    while not valid:
+        coords = input("Enter coordinates: ")
+        x = ord(coords[0]) - 65
+        y = int(coords[1])
+        if x < 0 or x > 9 or y < 0 or y > 9:
+            print("Invalid coordinates.")
+        elif temp_board[x][y] == -1:
+            print("miss")
+            temp_board[x][y] = "*"
+            valid = True
+        elif temp_board[x][y] == "*" or temp_board[x][y] == "$":
+            # This is technically invalid, so valid remains False
+            print("already shot")
+        else:
+            print("hit")
+            temp_board[x][y] = "$"
+            valid = True
+
+    board[0] = temp_board
+    print_board(board)
+
+
+def check_sunk(board, ships):
+    """A function for checking if a ship has been sunk.
+    Takes 2 arguments, the board array and the ships dictionary."""
+
+    temp_board = board[0]
+
+    for ship in ships:
+        ship_length = ships[ship]
+        if ship[0] in temp_board:
+            for i in range(ship_length):
+                if temp_board[ship[0]][i] != "*":
+                    return False
+    return True
+
+
+def play_game(board):
+    """A function for playing the game.
+    Takes 1 argument, the board array."""
+
+    temp_board = board[0]
+
+    while True:
+        make_move(board)
+        if check_win(temp_board):
+            print("You win!")
+            break
+        else:
+            print("You lost!")
+            break
+
+
+def check_win(board):
+    """A function for checking if the player has won.
+    Takes 1 argument, the board array."""
+
+    for i in range(BOARD_SIZE):
+        for j in range(BOARD_SIZE):
+            if board[i][j] == -1:
+                return False
+    return True
 
 
 def main():
@@ -155,7 +232,7 @@ def main():
 
     print_board(player1_board)
     place_ships(player1_board, SHIPS)
-    print_board(player1_board)
+    make_move(player1_board)
 
 if __name__ == "__main__":
     main()
