@@ -46,7 +46,7 @@ def print_board(board):
     print(player_num + "'s board:")
     print()
     print("  ", end="")
-    for i in range(1, BOARD_SIZE + 1):
+    for i in range(0, 10):
         print(" " + str(i) + " ", end="")
     print()
 
@@ -88,7 +88,8 @@ def place_ships(board,ships):
         print()
 
         # Get ship location and orientation
-        while True:
+        valid = True
+        while valid:
             coords = input("Enter coordinates: ")
             orientation = input("Enter orientation: ")
 
@@ -98,12 +99,20 @@ def place_ships(board,ships):
                 print("Invalid coordinates.")
             elif orientation not in ('v', 'h'):
                 print("Invalid orientation.")
-            elif x + ship_length > 10 or y + ship_length > 10:
+            elif orientation == "v" and x + ship_length > 10:
+                print("ship is too long.")
+            elif orientation == "h" and y + ship_length > 10:
                 print("Ship is too long.")
-            elif temp_board[x][y] != -1:
-                print("That spot is already taken.")
             else:
-                break
+                if orientation == "v":
+                    for i in range(ship_length):
+                        if temp_board[x + i][y] != -1:
+                            print("Ship overlaps.")
+                elif orientation == "h":
+                    for i in range(ship_length):
+                        if temp_board[x][y + i] != -1:
+                            print("Ship overlaps.")
+
 
         # Place the ship
         if orientation == 'h':

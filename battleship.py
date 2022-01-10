@@ -87,7 +87,7 @@ def computer_place_ships(board,ships):
             x = random.randint(1,10)-1
             y = random.randint(1,10)-1
             o = random.randint(0,1)
-            if o == 0: 
+            if o == 0:
                 ori = "v"
             else:
                 ori = "h"
@@ -168,7 +168,6 @@ def get_coor():
             print(e)
 
 def make_move(board,x,y):
-
 	#make a move on the board and return the result, hit, miss or try again for repeat hit
     if board[x][y] == -1:
         return "miss"
