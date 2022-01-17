@@ -3,6 +3,7 @@
 import copy
 import os
 
+
 LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
 BOARD_SIZE = 10
 SHIPS = {"Aircraft Carrier": 5, # A
