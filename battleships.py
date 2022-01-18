@@ -31,7 +31,6 @@ def game_setup():
     p1_submarine = copy.deepcopy(SUBMARINE)
     p1_destroyer = copy.deepcopy(DESTROYER)
     p1_patrol_boat = copy.deepcopy(PATROL_BOAT)
-    global player1_ships
     player1_ships = [p1_aircraft_carrier, p1_battleship, p1_submarine, p1_destroyer, p1_patrol_boat]
 
     p2_aircraft_carrier = copy.deepcopy(AIRCRAFT_CARRIER)
@@ -39,8 +38,9 @@ def game_setup():
     p2_submarine = copy.deepcopy(SUBMARINE)
     p2_destroyer = copy.deepcopy(DESTROYER)
     p2_patrol_boat = copy.deepcopy(PATROL_BOAT)
-    global player2_ships
     player2_ships = [p2_aircraft_carrier, p2_battleship, p2_submarine, p2_destroyer, p2_patrol_boat]
+
+    return player1_ships, player2_ships
 
 
 def place_ship(board, ship, player):
@@ -106,7 +106,7 @@ def place_ships(board, ships, player):
 def main():
     """Main function"""
     # Game setup
-    game_setup()
+    player1_ships, player2_ships = game_setup()
 
     # Place ships
     place_ships(p1_board, player1_ships, 1)
