@@ -3,6 +3,8 @@ This is the code for my game of battleships."""
 
 import copy
 import os
+import warnings
+import sys
 from class_ship import Ship
 from class_board import Board
 
@@ -43,6 +45,28 @@ def game_setup():
     return player1_ships, player2_ships
 
 
+def get_coordinates():
+    """Get the coordinates of a shot from the player"""
+    valid = False
+    while not valid:
+        print()
+        coordinates = input("Enter coordinates: ")
+        try:
+            x = ord(coordinates[0].upper()) - 65
+            y = int(coordinates[1])
+        except ValueError:
+            warnings.warn("Coordinates must be in the form of A1, B2, etc.")
+        except IndexError:
+            warnings.warn("Do not leave the coordinates blank.")
+        else:
+            if x < 0 or x > 9 or y < 0 or y > 9:
+                print("Invalid coordinates.")
+            else:
+                valid = True
+
+    return x, y
+
+
 def place_ship(board, ship, player):
     """Place a ship on the board"""
     cls()
@@ -56,26 +80,22 @@ def place_ship(board, ship, player):
     while not valid:
         print()
         overlap = False
-        coordinates = input("Enter coordinates: ")
+
+        x, y = get_coordinates()
         orientation = input("Enter orientation: ")
 
-        x = ord(coordinates[0].upper()) - 65
-        y = int(coordinates[1])
-
-        if x < 0 or x > 9 or y < 0 or y > 9:
-            print("Invalid coordinates.")
-        elif orientation.lower() not in ('v', 'h'):
+        if orientation.lower() not in ('v', 'h'):
             print("Invalid orientation.")
         elif orientation == 'v' and x + ship.size > 10:
             print("Ship is too long")
         elif orientation == 'h' and y + ship.size > 10:
             print("Ship is too long")
         else:
-            if orientation == 'v':
+            if orientation.lower() == 'v':
                 for i in range(ship.size):
                     if board.board[x + i][y] != -1:
                         overlap = True
-            elif orientation == 'h':
+            elif orientation.lower() == 'h':
                 for i in range(ship.size):
                     if board.board[x][y + i] != -1:
                         overlap = True
@@ -103,8 +123,99 @@ def place_ships(board, ships, player):
         place_ship(board, ship, player)
 
 
+def game_loop(playerboard, opponentboard, ships, player):
+    """Game loop for the game"""
+    cls()
+    playerboard.print_board(player)
+
+    opponentboard.print_board(player)
+
+    print()
+    print("Player " + str(player) + " turn.")
+    print("Enter the coordinates for your shot.")
+    print("(ex: A1, B2, etc)")
+    print()
+
+    valid = False
+    while not valid:
+
+        x, y = get_coordinates()
+
+        if opponentboard.board[x][y] == "*" or opponentboard.board[x][y] == "X":
+            print("You already shot there.")
+        else:
+            valid = True
+
+    if opponentboard.board[x][y] == -1:
+        print("Miss")
+        opponentboard.board[x][y] = "*"
+        input()
+    else:
+        print("Hit")
+        for ship in ships:
+            if ship.name[0] == opponentboard.board[x][y]:
+                opponentboard.board[x][y] = "X"
+                ship.hits += 1
+                if ship.hits == ship.size:
+                    print(ship.name + " sunk!")
+                    ships.remove(ship)
+                    if len(ships) == 0:
+                        print("Player " + str(player) + " wins!")
+                        input()
+                        return True
+                    else:
+                        input()
+                        return False
+                else:
+                    input()
+                    return False
+
+
+def main_menu():
+    """Main menu for the game"""
+    while True:
+        cls()
+        print("Welcome to Battleship!")
+        print("1. Start game")
+        print("2. Instructions")
+        print("3. Quit")
+        print()
+
+        valid = False
+        while not valid:
+            try:
+                choice = int(input("Enter your choice: "))
+            except ValueError:
+                warnings.warn("Please enter a number.")
+            else:
+                if choice < 1 or choice > 3:
+                    warnings.warn("Please enter a number between 1 and 3.")
+                else:
+                    valid = True
+
+        if choice == 1:
+            break
+        elif choice == 2:
+            cls()
+            print("Instructions:")
+            print("1. Place your ships on the board.")
+            print("2. Enter the coordinates of your shot.")
+            print("3. If you hit a ship, it will be marked as a hit (X).")
+            print("4. If you miss, it will be marked as a miss (*).")
+            print("The game is run on an honor system.")
+            print("The first player to sink all of the other player's ships wins.")
+            input("Press Enter to continue.")
+        else:
+            # Quit
+            sys.exit()
+
+
 def main():
     """Main function"""
+
+    # Main menu
+    main_menu()
+
     # Game setup
     player1_ships, player2_ships = game_setup()
 
@@ -114,35 +225,18 @@ def main():
 
     # Game loop
     while True:
-        # Player 1 turn
-        print("Player 1 turn")
-        p1_board.print_board(1)
-        print("Enter the coordinates of the shot.")
-        print("(ex: A1, B2, etc)")
-        shot = input("Enter coordinates: ")
-        x = ord(shot[0].upper()) - 65
-        y = int(shot[1])
-        if p2_board.board[x][y] == -1:
-            print("You missed!")
-        else:
-            print("You hit!")
-            p2_board.board[x][y] = '$'
-        p2_board.print_board(1)
+        cls()
+        input("Ready for player 1's turn. (Press Enter To Go)")
+        game_loop(p1_board, p2_board, player1_ships, 1)
 
-        # Player 2 turn
-        print("Player 2 turn")
-        p2_board.print_board(2)
-        print("Enter the coordinates of the shot.")
-        print("(ex: A1, B2, etc)")
-        shot = input("Enter coordinates: ")
-        x = ord(shot[0].upper()) - 65
-        y = int(shot[1])
-        if p1_board.board[x][y] == -1:
-            print("You missed!")
-        else:
-            print("You hit!")
-            p1_board.board[x][y] = '$'
-        p1_board.print_board(2)
+        cls()
+        input("Ready for player 2's turn. (Press Enter To Go)")
+        if game_loop(p2_board, p1_board, player2_ships, 2):
+            break
+
+    # Print final boards
+    p1_board.print_board(1)
+    p2_board.print_board(2)
 
 
 if __name__ == "__main__":

@@ -49,10 +49,10 @@ class Board:
                     print("[ ]", end="")
                 elif board[i][j] == "*":
                     print("[*]", end="")
+                elif board[i][j] == "X":
+                    print("[X]", end="")
                 elif board[i][j] != -1 and targetting_board:
-                    print("[$]", end="")
-                elif board[i][j] == "$":
-                    print("[$]", end="")
+                    print("[ ]", end="")
                 else:
                     print("[" + board[i][j].strip() + "]", end="")
 
